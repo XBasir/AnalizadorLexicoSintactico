@@ -81,8 +81,8 @@ public class InterfazFinalAnalixador extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         mensajetxt = new javax.swing.JLabel();
         imprimirText = new javax.swing.JTextArea();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        labelRobot = new javax.swing.JPanel();
+        robot = new javax.swing.JLabel();
 
         jLabel1.setBackground(new java.awt.Color(102, 102, 102));
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -206,13 +206,13 @@ public class InterfazFinalAnalixador extends javax.swing.JFrame {
         imprimirText.setRows(5);
         jPanel2.add(imprimirText, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 370, 350, -1));
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/edu/uniquindio/tlf/imagens/robot.png"))); // NOI18N
-        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 370, 50, 80));
+        labelRobot.setLayout(null);
 
-        jLabel3.setBackground(new java.awt.Color(204, 204, 204));
-        jLabel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 4));
-        jLabel3.setOpaque(true);
-        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 340, 280, 130));
+        robot.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/edu/uniquindio/tlf/imagens/robot.png"))); // NOI18N
+        labelRobot.add(robot);
+        robot.setBounds(115, 40, 50, 50);
+
+        jPanel2.add(labelRobot, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 340, 290, 130));
 
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 710, 500));
 
@@ -234,21 +234,60 @@ public class InterfazFinalAnalixador extends javax.swing.JFrame {
             analizadorLexico = new AnalizadorLexico(nombreArchivo);
             
             analizarTokens = analizadorLexico.analizarCodigo();
+            
+            //System.out.println(escribirTxt.getText());
 
             DefaultTableModel modelo = (DefaultTableModel) tablaAnalixador.getModel();
             int filas = tablaAnalixador.getRowCount() - 1;
             for (int i = filas; i >= 0; i--) {
                 modelo.removeRow(i);
             }
-
+            
+            
             String mensajeErrores = "";
+            String anteriorCategoria = "";
+            String anteriorLexema = "";
             for (TokensAnalixador token : analizarTokens) {
                 if (!token.getCategoria().equalsIgnoreCase(TokensAnalixador.SIMBOLOS_NO_RECONOCIDOS)) {
                     modelo.addRow(new Object[]{token.getLineaSiguiente(), token.getCategoria(), token.getLexema()});
+                    
+                    if(token.getCategoria()=="Metodo de mover"){
+                        for (TokensAnalixador token2 : analizarTokens) {
+                             if(token2.getCategoria()=="Numerico"){
+
+                                switch (token.getLexema()) {
+                                case "Up":
+                                     robot.setLocation(robot.getLocation().x, robot.getLocation().y - Integer.parseInt(token2.getLexema()));
+                                break;
+                                
+                                case "Left":
+                                     robot.setLocation(robot.getLocation().x + Integer.parseInt(token2.getLexema()), robot.getLocation().y);
+                                break;
+                       
+                                case "Right":
+                                     robot.setLocation(robot.getLocation().x - Integer.parseInt(token2.getLexema()), robot.getLocation().y);
+                                break;
+                       
+                                case "Down":
+                                     robot.setLocation(robot.getLocation().x , robot.getLocation().y + Integer.parseInt(token2.getLexema()));
+                                break;
+                       
+                       
+                                default:
+                                }
+                             break;   
+                             }
+                        }
+       
+                    }
+                    
                 }
                 if (token.getCategoria().equalsIgnoreCase(TokensAnalixador.SIMBOLOS_NO_RECONOCIDOS)) {
                     mensajeErrores += "Error : La sentencia '" + token.getLexema() + "' en la línea " + token.getLineaSiguiente() + " no es reconocida\n";
                 }
+                
+                anteriorLexema=token.getLexema();
+                anteriorCategoria=token.getCategoria();
             }
             mensajetxt.setText(advertencia);
             imprimirText.setText(mensajeErrores);
@@ -390,16 +429,16 @@ public class InterfazFinalAnalixador extends javax.swing.JFrame {
     private javax.swing.JButton guardarArchivoBoton;
     private javax.swing.JTextArea imprimirText;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPanel jpanelInterfazEscribir;
+    private javax.swing.JPanel labelRobot;
     private javax.swing.JTextArea lineaTxt;
     private javax.swing.JLabel mensajetxt;
+    private javax.swing.JLabel robot;
     private javax.swing.JTable tablaAnalixador;
     // End of variables declaration//GEN-END:variables
 }

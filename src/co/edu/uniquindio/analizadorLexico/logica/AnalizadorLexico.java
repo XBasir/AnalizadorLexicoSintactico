@@ -24,10 +24,6 @@ public class AnalizadorLexico {
    private static final String [] COMPARACIONES={
    "=>","=<","==","!=",
    };
-   
-    private static final String [] CICLOS={
-   "if","while",
-   };
 
    
    private GestionFichero gestionFichero;
